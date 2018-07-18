@@ -1,2 +1,2 @@
 # SMtrack
-single molecule tracking algorithm 
+single molecule tracking 
