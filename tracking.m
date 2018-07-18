@@ -4,7 +4,7 @@
 (*Spot Tracking*)
 
 
-BeginPackage["SMTrack`", {"segmentParticles`"}];
+BeginPackage["SMTrack`", {"detectParticles`"}];
 
 
 SMTrack::usage = "implements a robust single molecule tracking algorithm. The procedure is similar to the underlying algorithm proposed
