@@ -7,9 +7,10 @@
 BeginPackage["SMTrack`", {"segmentParticles`"}];
 
 
-SMTrack::usage = "implements a robust single molecule tracking algorithm. The procedure is similar to the underlying algorithm proposed in Lineage Mapper (Chalfoun et al). However,
-a Kalman predictor has been incorporated into the tracking scheme to address the case of occluding particles when the motion is linear. The implementation is expected to work successfully
-with numerous particle detection strategies.";
+SMTrack::usage = "implements a robust single molecule tracking algorithm. The procedure is similar to the underlying algorithm proposed
+in Lineage Mapper (Chalfoun et al). However, a Kalman predictor has been incorporated into the tracking scheme to address the case of
+occluding particles when the motion is linear. The implementation is expected to work successfully with numerous particle detection
+strategies.";
 
 
 (* ::Subsection:: *)
@@ -38,7 +39,8 @@ CompilationTarget-> "C"
 ];
 
 
-(* as the name implies, costMatrix generates the cost of traversing between an object @t and @t+1. More metrics e.g. texture metrics can be added.
+(* as the name implies, costMatrix generates the cost of traversing between an object @t and @t+1. 
+More metrics e.g. texture metrics can be added.
 In fact an arbitrary # of user defined metrics can be incorporated to compute the cost *)
 costMatrix[segPrev_,segCurr_, OptionsPattern[SMTrack]]:= Module[{centroidPrev,centroidCurr, centroidDiffMat,
 areaPrev,areaCurr, nCol,nRow,pos,centroidTerm,spArraycentDiff,mask, centroidW = OptionValue@"centroidW", 
@@ -51,7 +53,8 @@ maxCentDist = OptionValue@"maxCentDist"},
 centroidDiffMat = DistanceMatrix[N@centroidPrev,N@centroidCurr]; (* calculating pairwise distance between centroids in frames t, t+1 *)
 centroidTerm = centCompiled[centroidDiffMat,maxCentDist]; (* optimized to compute centroidTerm *)
 
-spArraycentDiff = SparseArray[UnitStep[maxCentDist - centroidDiffMat], Automatic, 0]; (* finding positions in centDiffMat for dist within maxCentDist *)
+spArraycentDiff = SparseArray[UnitStep[maxCentDist - centroidDiffMat], Automatic, 0]; (* finding positions in centDiffMat for dist
+within maxCentDist *)
 pos = spArraycentDiff["NonzeroPositions"]; (* positions where overlaps occur or centroids within maxCentDist *)
 mask = SparseArray[pos -> 1,{nRow,nCol},\[Infinity]]; (* creating the mask for costMat *)
 mask*(centroidW*centroidTerm)
