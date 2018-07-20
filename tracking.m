@@ -27,6 +27,14 @@ dist = Map[EuclideanDistance@@#&,vertices];
 {Mean@#,StandardDeviation@#}&@dist
 ];
 
+maxJumpDistance[centPrev_,centNew_,distDelaunay_]:= Module[{nearestFunc,rec,pts,\[ScriptCapitalA]},
+nearestFunc = Nearest@centPrev;
+rec = Flatten[Table[{i,Length@nearestFunc[#,{All,i}]},{i,0,distDelaunay,1}]&/@centNew, 1];
+pts = Cases[rec,{_,_?(#<=1&)}];
+\[ScriptCapitalA] = WeightedData@pts[[All,1]];
+N@*Mean@\[ScriptCapitalA]
+];
+
 
 (* ::Subsection:: *)
 (*cost matrix*)
