@@ -12,7 +12,7 @@ The implementation is expected to work successfully with numerous particle detec
 
 ###### 0. rework on the Gaussian-Fit
 ###### 1. add a better particle detection scheme (Near Future)
-###### 2. Kalman predictor to handle occlusions when particle motion model exists (e.g. constant velocity etc ..) (Near Future)
+###### 2. Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) (Near Future)
 
 
 
