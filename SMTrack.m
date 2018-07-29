@@ -15,20 +15,12 @@ Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "ove
  "LoGkernel" -> 2, "morphBinarizeThreshold" -> 0.75};
 
 
-<<<<<<< HEAD
-SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the underlying algorithm proposed in Lineage Mapper
-(Chalfoun et al, Sci. Reports 2016). A novel implementation of a per-frame particle jump distance has been incorporated, which relies on a mean distance(computed via a
-Delaunay Mesh) and its minimization such that a maximum of 0 or 1 particle association is obtained between consecutive frames. The implementation is expected to work
-successfully with numerous particle detection strategies. Another novel aspect is the inclusion of \"subpixel particle localization\" which can be achieved using a two
-dimension Gaussian-Fit";
-=======
 SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the
 underlying algorithm proposed in Lineage Mapper (Chalfoun et al, Sci. Reports 2016). A novel implementation of a per-frame particle
 jump distance has been incorporated, which relies on a mean distance(computed via a Delaunay Mesh) and its minimization such that a
 maximum of 0 or 1 particle association is obtained between consecutive frames. The implementation is expected to work successfully
 with numerous particle detection strategies. Another novel aspect is the inclusion of \"subpixel particle localization\" which can be
 achieved using a two dimensional Gaussian-Fit";
->>>>>>> 03311f35b8d247d171be072a9367bb6d2b7cabb5
 
 
 (* mean separation between detected particles *)
