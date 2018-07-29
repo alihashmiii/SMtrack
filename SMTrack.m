@@ -219,19 +219,24 @@ assignmentsList = SortBy[assignmentsList, First];
 {parent,centroidsCurr[[currentassigned]]}];
 
 (* new spots added to seeds and currentKeyVector *)
-currentunassigned = Complement[Range[Last@dim],currentassigned];
-maxlabelprev = Max@currentKeyVector;
-newlabels = Range[maxlabelprev+1,maxlabelprev+Length@currentunassigned];
+ currentunassigned = Complement[Range[Last@dim],currentassigned];
+ maxlabelprev = Max@currentKeyVector;
+ newlabels = Range[maxlabelprev+1,maxlabelprev+Length@currentunassigned];
 
-AssociateTo[seeds,
-MapAt[List, Thread[newlabels->Part[centroidsCurr,currentunassigned]],{All,2}]
+If[newlabels != {},
+ AssociateTo[seeds, 
+  MapAt[List,Thread[newlabels->Part[centroidsCurr,currentunassigned]],{All,2}]
+ ]
 ];
 
 (* remove untracked parents from currentKeyVector *)
 currentKeyVector = DeleteCases[currentKeyVector,Alternatives@@(currentKeyVector~Complement~parent)];
 currentKeyVector= Join[currentKeyVector,newlabels];
-(* tracked and then new *)
-centroidsCurr[[currentassigned]]~caten~centroidsCurr[[currentunassigned]]
+
+If[currentassigned != {}, 
+ (centroidsCurr[[currentassigned]]~caten~centroidsCurr[[currentunassigned]]),
+ centroidsCurr[[currentunassigned]]
+ ]
 ];
 
 
