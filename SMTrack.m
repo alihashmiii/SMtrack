@@ -15,11 +15,12 @@ Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "ove
 BeginPackage["SMTrack`"];
 
 
-SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the underlying algorithm proposed in Lineage Mapper
-(Chalfoun et al, Sci. Reports 2016). A novel implementation of a per-frame particle jump distance has been incorporated, which relies on a mean distance(computed via a
-Delaunay Mesh) and its minimization such that a maximum of 0 or 1 particle association is obtained between consecutive frames. The implementation is expected to work
-successfully with numerous particle detection strategies. Another novel aspect is the inclusion of \"subpixel particle localization\" which can be achieved using a two
-dimensional Gaussian-Fit";
+SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the
+underlying algorithm proposed in Lineage Mapper (Chalfoun et al, Sci. Reports 2016). A novel implementation of a per-frame particle
+jump distance has been incorporated, which relies on a mean distance(computed via a Delaunay Mesh) and its minimization such that a
+maximum of 0 or 1 particle association is obtained between consecutive frames. The implementation is expected to work successfully
+with numerous particle detection strategies. Another novel aspect is the inclusion of \"subpixel particle localization\" which can be
+achieved using a two dimensional Gaussian-Fit";
 
 
 (* mean separation between detected particles *)
@@ -126,6 +127,7 @@ CompilationTarget-> "C"
 
 (* as the name implies, costMatrix generates the cost of traversing between an object @t and @t+1. More metrics e.g.
 texture metrics can be added. In fact an arbitrary # of user defined metrics can be incorporated to compute the cost *)
+
 costMatrix[Prev_,Curr_, OptionsPattern[SMTrack]]:= Module[{centroidPrev,centroidCurr,areaPrev,centroidDiffMat,areaCurr,nCol,
 nRow,pos,mask,overlapMat,centroidW = OptionValue@"centroidW",spArraycentDiff,centroidTerm,maxCentDist,overlapTerm,sizeTerm,
 spArrayOverlap,sizeW=OptionValue@"sizeW",overlapW=OptionValue@"overlapW",subpix=OptionValue@"subpixelLocalize"},
