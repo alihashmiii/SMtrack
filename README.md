@@ -9,6 +9,9 @@ The implementation is expected to work successfully with numerous particle detec
 `Possible improvements:`
 
 ###### 1. add a better particle detection scheme
+###### 2. Kalman predictor to handle occlusions when particle motion model exists (e.g. constant velocity etc ..) 
+
+
 
 
 
