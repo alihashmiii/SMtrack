@@ -12,9 +12,11 @@ The implementation is expected to work successfully with numerous particle detec
 
 
 
-##### superposition of all particle trajectories for one video:
+##### Input:
 
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/input.gif) 
 
+
+##### superposition of all particle trajectories for the above movie:
 
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/particle%20Trajectories.png)
