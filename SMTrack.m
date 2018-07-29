@@ -15,15 +15,15 @@ Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "ove
 BeginPackage["SMTrack`"];
 
 
-SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the underlying algorithm proposed in Lineage Mapper 
+SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the underlying algorithm proposed in Lineage Mapper
 (Chalfoun et al, Sci. Reports 2016). A novel implementation of a per-frame particle jump distance has been incorporated, which relies on a mean distance(computed via a
 Delaunay Mesh) and its minimization such that a maximum of 0 or 1 particle association is obtained between consecutive frames. The implementation is expected to work
 successfully with numerous particle detection strategies. Another novel aspect is the inclusion of \"subpixel particle localization\" which can be achieved using a two
-dimension Gaussian-Fit";
+dimensional Gaussian-Fit";
 
 
 (* mean separation between detected particles *)
-meanParticleDist[centroids_]:= Module[{vertices,dist}, 
+meanParticleDist[centroids_]:= Module[{vertices,dist},
 vertices = MeshPrimitives[DelaunayMesh@centroids, 1]/.Line[x_]:> x;
 dist = Map[EuclideanDistance@@#&,vertices];
 {Mean@#,StandardDeviation@#}&@dist
@@ -37,7 +37,7 @@ rec = Flatten[Table[{i, Length@nearestFunc[#,{All, i}]},{i, 0, distDelaunay, 1}]
 pts = Cases[rec, {_,_?(#<=1&)}];
 \[ScriptCapitalA] = WeightedData@Part[pts, All, 1];
 N@*Mean@\[ScriptCapitalA]
-]; 
+];
 
 
 segmentImage[image_Image,LoGKernelsize_,threshold_]:=MorphologicalComponents[
@@ -142,17 +142,17 @@ centroidDiffMat = DistanceMatrix[N@centroidPrev,N@centroidCurr];
 centroidTerm = centCompiled[centroidDiffMat,maxCentDist];
 spArraycentDiff = SparseArray[UnitStep[maxCentDist - centroidDiffMat], Automatic, 0];
 
-pos = If[overlapW > 0,(overlapMat = overlapMatrix[Prev,Curr]; 
+pos = If[overlapW > 0,(overlapMat = overlapMatrix[Prev,Curr];
 overlapTerm = overlapCompiled[overlapMat,areaPrev,areaCurr]; (* compute overlapTerm *)
-spArrayOverlap = SparseArray[overlapTerm,Automatic,1.]; 
+spArrayOverlap = SparseArray[overlapTerm,Automatic,1.];
 (* positions where overlaps occur or centroids within maxCentDist *)
 spArrayOverlap["NonzeroPositions"]~Union~spArraycentDiff["NonzeroPositions"]),
 (overlapTerm = 0; spArraycentDiff["NonzeroPositions"])
-]; 
+];
 (* compute sizeTerm *)
 sizeTerm = If[sizeW > 0, areaPrev~sizeCompiled~areaCurr, 0];
-(* creating the mask for costMat *) 
-mask = SparseArray[pos -> 1, {nRow,nCol}, \[Infinity]]; 
+(* creating the mask for costMat *)
+mask = SparseArray[pos -> 1, {nRow,nCol}, \[Infinity]];
 mask*(overlapW*overlapTerm + centroidW*centroidTerm + sizeW*sizeTerm)
 ];
 
@@ -165,7 +165,7 @@ assignmentHelper[costMat_,truePrevKeys_]:=Module[{rmins,otherassoc,rules,assignm
 artificialInds,previnds,realindices,ruleAssigned,currentassigned},
 rmins = rowwiseMins@costMat;
 (* other possible associations using columnwise mins *)
-otherassoc = Sort@Flatten@KeyValueMap[Thread@*Rule, 
+otherassoc = Sort@Flatten@KeyValueMap[Thread@*Rule,
 DeleteCases[colwiseMins[costMat]@Identity,x_/;Length@x>1]];
 rules = Sort@DeleteDuplicates[rmins~Join~otherassoc];
 artificialInds = rules/.Rule->List;
@@ -196,12 +196,12 @@ maxlabelprev = Max@truePrevKeys;
 newlabels = Range[maxlabelprev+1,maxlabelprev+Length@currentunassigned];
 newcellAssignmentRules = Thread[currentunassigned-> newlabels];
 allAssignmentRules = Dispatch@SortBy[newcellAssignmentRules~Join~ruleAssigned, First];
-Replace[segCurr,allAssignmentRules,{2}] 
+Replace[segCurr,allAssignmentRules,{2}]
 ];
 
 
 caten[list1_,list2:{_?NumberQ,_?NumberQ}]:=Join[list1,{list2}];
-caten[list1_,list2:{{_,_}..}]:=list1~Join~list2; 
+caten[list1_,list2:{{_,_}..}]:=list1~Join~list2;
 
 
 (* make currentKeyVector and seeds global *)
@@ -217,7 +217,7 @@ assignmentsList = SortBy[assignmentsList, First];
 {parent,centroidsCurr[[currentassigned]]}];
 
 (* new spots added to seeds and currentKeyVector *)
-currentunassigned = Complement[Range[Last@dim],currentassigned]; 
+currentunassigned = Complement[Range[Last@dim],currentassigned];
 maxlabelprev = Max@currentKeyVector;
 newlabels = Range[maxlabelprev+1,maxlabelprev+Length@currentunassigned];
 
@@ -229,7 +229,7 @@ MapAt[List, Thread[newlabels->Part[centroidsCurr,currentunassigned]],{All,2}]
 currentKeyVector = DeleteCases[currentKeyVector,Alternatives@@(currentKeyVector~Complement~parent)];
 currentKeyVector= Join[currentKeyVector,newlabels];
 (* tracked and then new *)
-centroidsCurr[[currentassigned]]~caten~centroidsCurr[[currentunassigned]] 
+centroidsCurr[[currentassigned]]~caten~centroidsCurr[[currentunassigned]]
 ];
 
 
@@ -242,14 +242,14 @@ stackCorrespondence[prev_, curr_, False, opt: OptionsPattern[SMTrack]]:= Module[
 costmat =costMatrix[prev,curr,opt];
 truelabels = Keys@ComponentMeasurements[prev,"Label"];
 assignmentLabelMat[curr,costmat,truelabels]
-]; 
+];
 
 
 (* prev and curr are centroids *)
 stackCorrespondence[prev_, curr_, True, opt: OptionsPattern[SMTrack]]:= Module[{costmat},
 costmat =costMatrix[prev,curr,opt];
 assignmentSubPixel[curr,costmat]
-]; 
+];
 
 
 (* Main Function *)
@@ -259,8 +259,8 @@ thresh = OptionValue@"morphBinarizeThreshold"},
 
 funcGenerator["subpixelLocalize" -> subpixloc];
 
-input = Switch[segmented, False, 
-If[subpixloc == False, 
+input = Switch[segmented, False,
+If[subpixloc == False,
 ParallelTable[detectParticle[i,logKernel,thresh],{i,imports}],
 ParallelTable[Quiet@detectParticle[i,logKernel,thresh],{i,imports}]
 ], _ ,imports];
