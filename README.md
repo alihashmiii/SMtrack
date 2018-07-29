@@ -23,6 +23,11 @@ The implementation is expected to work successfully with numerous particle detec
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/input.gif) 
 
 
+##### for computing per-frame jump distance:
+
+![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/overlayed%20jump%20distance.png)
+
+
 ##### superposition of all particle trajectories for the above movie:
 
-![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/particle%20Trajectories.png)
+![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/output.png)
