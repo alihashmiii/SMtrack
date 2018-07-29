@@ -139,7 +139,7 @@ If[subpix,
 ];
 
 {nRow,nCol} = Length/@{centroidPrev,centroidCurr};
- maxCentDist = maxJumpDistance[#,centroidCurr,First@meanParticleDist[#]]&@centroidPrev;
+maxCentDist = maxJumpDistance[#,centroidCurr,First@meanParticleDist[#]]&@centroidPrev;
 centroidDiffMat = DistanceMatrix[N@centroidPrev,N@centroidCurr];
 centroidTerm = centCompiled[centroidDiffMat,maxCentDist];
 spArraycentDiff = SparseArray[UnitStep[maxCentDist - centroidDiffMat], Automatic, 0];
