@@ -1,7 +1,7 @@
 Single Particle Tracking
 =======
 
-Status: In progress.
+`Status: In progress`
 
 SMTrack package implements a robust single molecule tracking scheme based upon a modified version of Lineage Mapper (Chalfoun et al, Scientific Reports 2016). A novel implementation of a per-frame particle jump-distance has been incorporated, which relies on a mean distance (computed via a Delaunay Mesh) and its minimization such that a maximum of 0 or 1 particle association is obtained between consecutive frames.
 
@@ -10,7 +10,7 @@ The implementation is expected to work successfully with numerous particle detec
 
 `To Do:`
 
-###### 0. rework on the 2D Gaussian-Fits (high priority and important for subpixel localization)
+###### 0. Rework on the 2D Gaussian-Fits (high priority and important for subpixel localization)
 
 
 `Possible improvements:`
