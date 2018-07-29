@@ -8,12 +8,16 @@ SMTrack package implements a robust single molecule tracking scheme based upon a
 The implementation is expected to work successfully with numerous particle detection strategies. Another novel aspect is the inclusion of
 "subpixel particle localization" which relies on a two-dimensional Gaussian-Fit.
 
+`To Do:`
+
+###### 0. rework on the 2D Gaussian-Fits (high priority and important for subpixel localization)
+
+
 `Possible improvements:`
 
-###### 0. rework on the 2D Gaussian-Fit (High Priority)
-###### 1. add a better particle detection scheme (such as FogBank by NIST) ... can considerably improve the results (Near Future)
-###### 2. Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) (Near Future)
+###### 1. Add a better particle detection scheme (example, FogBank by NIST) ... can considerably improve the results (Near Future)
 
+###### 2. Not necessary but perhaps important for low density cases: Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) (Near Future)
 
 
 
