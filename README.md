@@ -10,8 +10,8 @@ The implementation is expected to work successfully with numerous particle detec
 
 `Possible improvements:`
 
-###### 0. rework on the 2D Gaussian-Fit
-###### 1. add a better particle detection scheme ... can considerably improve the results (Near Future)
+###### 0. rework on the 2D Gaussian-Fit (High Priority)
+###### 1. add a better particle detection scheme (such as FogBank by NIST) ... can considerably improve the results (Near Future)
 ###### 2. Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) (Near Future)
 
 
