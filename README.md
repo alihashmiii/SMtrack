@@ -13,11 +13,11 @@ The implementation is expected to work successfully with numerous particle detec
 ###### 0. Rework on the 2D Gaussian-Fits (high priority and important for subpixel localization)
 
 
-`Possible improvements:`
+`Possible improvements (Near Future):`
 
-###### 1. Add a better particle detection scheme (example, FogBank by NIST) ... can considerably improve the results (Near Future)
+###### 1. Add a better particle detection scheme (example, FogBank by NIST) ... can considerably improve the results 
 
-###### 2. Not necessary but perhaps important for low density cases: Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) (Near Future)
+###### 2. Not necessary but perhaps important for low density cases: Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) 
 
 
 
