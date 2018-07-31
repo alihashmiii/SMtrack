@@ -5,17 +5,13 @@ Single Particle Tracking
 
 SMTrack package implements a robust single molecule tracking scheme based upon a modified version of Lineage Mapper (Chalfoun et al, Scientific Reports 2016). A novel implementation of a per-frame particle jump-distance has been incorporated, which relies on a mean distance (computed via a Delaunay Mesh) and its minimization such that a maximum of 0 or 1 particle association is obtained between consecutive frames.
 
-The implementation is expected to work successfully with numerous particle detection strategies. Another novel aspect is the inclusion of
-"subpixel particle localization" which relies on a two-dimensional Gaussian-Fit.
+The implementation is expected to work successfully with numerous particle detection strategies. Another novel aspect is the inclusion of "subpixel particle localization" which relies on a two-dimensional Gaussian-Fit.
 
-`To Do:`
-
-###### 0. Rework on the 2D Gaussian-Fits (high priority and important for subpixel localization)
-
+Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) Filter with thresholding. Another variant uses the maxima of the distance transform of the thresholded image as seeds to WatershedComponents (gradient descent version or rainfall algorithm (Osma-Ruiz)) to segment for individual spots. 2D Gaussians can be fit to either the thresholded image or the watershed components.
 
 `Possible improvements (Near Future):`
 
-###### 1. Add a better particle detection scheme (example, FogBank by NIST) ... can considerably improve the results 
+###### 1. Add a different detection scheme (example, FogBank by NIST) ... can possibly improve results 
 
 ###### 2. Not necessary but perhaps important for low density cases: Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) 
 
