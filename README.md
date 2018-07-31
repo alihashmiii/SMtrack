@@ -33,7 +33,7 @@ Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) Filter
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/segoutput.png)
 
 
-##### a Gaussian is fit to the data for achieving subpixel localization:
+##### a Gaussian (rainbow) is fit to the data (yellow) for achieving subpixel localization:
 
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/gaussianFit.png)
 
