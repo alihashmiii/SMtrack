@@ -28,7 +28,7 @@ Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) Filter
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/overlayed%20jump%20distance.png)
 
 
-##### superposition of all particle trajectories for the above movie (subpixel localization = False):
+##### superposition of all particle trajectories for the above movie `subpixel localization = False`:
 
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/segoutput.png)
 
@@ -38,7 +38,7 @@ Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) Filter
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/gaussianFit.png)
 
 
-##### superposition of all particle trajectories for the above movie (subpixel localization = True):
+##### superposition of all particle trajectories for the above movie `subpixel localization = True`:
 
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/subpixoutput.png)
 
