@@ -1,7 +1,6 @@
 Single Particle Tracking
 =======
 
-`Status: In progress`
 
 SMTrack package implements a robust single molecule tracking scheme based upon a modified version of Lineage Mapper (Chalfoun et al, Scientific Reports 2016). A novel implementation of a per-frame particle jump-distance has been incorporated, which relies on a mean distance (computed via a Delaunay Mesh) and its minimization such that a maximum of 0 or 1 particle association is obtained between consecutive frames.
 
@@ -11,7 +10,7 @@ Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) Filter
 
 `Possible improvements (Near Future):`
 
-###### 1. Add a different detection scheme (example, FogBank by NIST) ... can possibly improve results 
+###### 1. Add a different detection scheme (example, FogBank by NIST) ... can perhaps improve results 
 
 ###### 2. Not necessary but perhaps important for low density cases: Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) 
 
