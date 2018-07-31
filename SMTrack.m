@@ -296,13 +296,13 @@ assignmentsList = SortBy[assignmentsList,First];
  MapThread[(seeds[#1] = Join[seeds[#1],{#2}])&,{parent,Part[Curr,currentassigned]}];
 
 (* new spots added to seeds and currentKeyVector *)
-currentunassigned = Complement[Range[Last@dim],currentassigned]; 
+currentunassigned = Complement[Range[Last@dim],currentassigned];
 maxlabelprev = Max@currentKeyVector;
 newlabels = Range[maxlabelprev + 1, maxlabelprev + Length@currentunassigned];
 
-If[newlabels != {}, 
+If[newlabels != {},
  AssociateTo[seeds,
-  MapAt[List, 
+  MapAt[List,
    Thread[newlabels -> Part[Curr,currentunassigned]],{All,2}]
 ]
 ];
@@ -334,7 +334,7 @@ assignmentLabelMat[curr,costmat,truelabels]
 stackCorrespondence[prev_, curr_, True,opt:OptionsPattern[SMTrack]]:= Module[{costmat},
 costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
 assignmentSubPixel[curr,costmat]
-]; 
+];
 
 
 (* Main Function *)
