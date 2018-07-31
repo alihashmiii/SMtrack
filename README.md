@@ -32,6 +32,17 @@ The implementation is expected to work successfully with numerous particle detec
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/overlayed%20jump%20distance.png)
 
 
-##### superposition of all particle trajectories for the above movie:
+##### superposition of all particle trajectories for the above movie (subpixel localization = False):
 
-![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/output.png)
+![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/segoutput.png)
+
+
+##### a Gaussian is fit to the data for achieving subpixel localization:
+
+![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/gaussianFit.png)
+
+
+##### superposition of all particle trajectories for the above movie (subpixel localization = True):
+
+![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/subpixoutput.png)
+
