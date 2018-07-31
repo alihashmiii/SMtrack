@@ -11,8 +11,8 @@
 BeginPackage["SMTrack`"];
 
 
-Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "overlapW" -> 0, "subpixelLocalize" -> False,
- "LoGkernel" -> 2, "morphBinarizeThreshold" -> 0.75};
+Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "overlapW" -> 0,
+ "subpixelLocalize" -> False, "LoGkernel" -> 2, "threshold" -> 2.51};
 
 
 SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the
@@ -35,20 +35,44 @@ dist = Map[EuclideanDistance@@#&,vertices];
 maxJumpDistance[centPrev_,centNew_,distDelaunay_]:= Module[{nearestFunc,rec,pts,\[ScriptCapitalA]},
 nearestFunc = Nearest@centPrev;
 rec = Flatten[Table[{i, Length@nearestFunc[#,{All, i}]},{i, 0, distDelaunay, 1}]&/@centNew, 1];
-pts = Cases[rec, {_,_?(#<=1&)}];
+pts = Cases[rec, {_,_?(# <= 1 &)}];
 \[ScriptCapitalA] = WeightedData@Part[pts, All, 1];
 N@*Mean@\[ScriptCapitalA]
 ];
 
 
-segmentImage[image_Image,LoGKernelsize_,threshold_]:=MorphologicalComponents[
+(* segmentImage[image_Image,LoGKernelsize_,threshold_]:=MorphologicalComponents[
 FillingTransform@MorphologicalBinarize[
 ColorNegate@*ImageAdjust@LaplacianGaussianFilter[image,LoGKernelsize],
 threshold]
+]; *)
+
+
+(* segmentImage[image_Image,LoGKernelsize_]:=Module[{seg,seeds,bglabel},
+seg =MorphologicalBinarize[
+DeleteSmallComponents@Threshold[ColorNegate@LaplacianGaussianFilter[Blur[image],LoGKernelsize],
+{"Hard","Cluster"}]
+];
+seeds=MaxDetect[DistanceTransform@seg];
+seg=WatershedComponents[image,seeds,Method\[Rule]"Rainfall"];
+bglabel=First@@MaximalBy[ComponentMeasurements[seg,"Area"],Values];
+ArrayComponents[seg,2,bglabel\[Rule] 0]
+]; *)
+
+
+segmentImage[image_Image,LoGKernelsize_,threshold_]:=Module[{seg,seeds,bglabel},
+seg = MorphologicalBinarize[
+DeleteSmallComponents@Threshold[ColorNegate@Blur[LaplacianGaussianFilter[image,LoGKernelsize],threshold],
+{"Hard","Cluster"}]
+];
+seeds = MaxDetect[DistanceTransform@seg];
+seg = WatershedComponents[image,seeds,Method->"Rainfall"];
+bglabel = First@@MaximalBy[ComponentMeasurements[seg,"Area"],Values];
+ArrayComponents[seg,2,bglabel-> 0]
 ];
 
 
-modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,data3D,a,b,mx,my,sx,sy,x,y,fm},
+(* modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,data3D,a,b,mx,my,sx,sy,x,y,fm},
 pixelpos = mask["NonzeroPositions"];
 pixelval = PixelValue[image, pixelpos];
 img = ReplacePixelValue[shape, Thread[PixelValuePositions[shape, 1] -> pixelval]];
@@ -58,13 +82,60 @@ fm = NonlinearModelFit[data3D, a E^(-(((-my + y) Cos[b] - (-mx + x) Sin[b])^2/(2
  (-my + y) Sin[b])^2/(2 sx^2)), {a,b,mx,my,sx,sy},{x, y}];
 {a,b,mx,my,sx,sy} = {a,b,mx,my,sx,sy} /. fm["BestFitParameters"];
 Mean/@Transpose@box + {mx,my} - (Dimensions@data)/2.0
+]; *)
+
+
+modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,a,b,weights,data3D,
+mx,my,sx,sy,x,y,fm,dx,dy,cent,background,bestfit,intensityGuess,brightest},
+pixelpos = mask["NonzeroPositions"];
+pixelval = PixelValue[image, pixelpos];
+brightest = Max@pixelval;
+img = ReplacePixelValue[shape, Thread[PixelValuePositions[shape, 1] -> pixelval]];
+data = ImageData@ImagePad[img, 2];
+data3D = Flatten[MapIndexed[{First@#2, Last@#2, #1} &, data, {2}], 1];
+{dx,dy}= Dimensions@data;
+cent = N[(dx + dy)/2];
+intensityGuess = Max@data;
+fm = NonlinearModelFit[data3D,
+ background+(a * Exp[-((x-mx)^2/(2*sx^2))-((y-my)^2/(2*sy^2))]),
+{{background,0.1},{a,intensityGuess},{mx,cent/2},{my,cent/2},{sx,cent/4},{sy,cent/4}},
+{x, y}];
+bestfit = fm["BestFitParameters"];
+(* if any param is less than 0 then we run a constrained fit *)
+If[Length[Position[bestfit[[All,2]],x_/;x<0]]>0,
+fm = NonlinearModelFit[data3D,
+{
+background + (a * Exp[-((x-mx)^2/(2*sx^2)) - ((y-my)^2/(2*sy^2))]),
+{background>0,a >0, mx >0, my > 0, sx >0, sy >0}
+},
+{{background,0.1},{a,intensityGuess},{mx,cent/2},{my,cent/2},{sx,cent/4},{sy,cent/4}},
+{x,y}
+];
+];
+bestfit = fm["BestFitParameters"];
+If[brightest>0.9,
+weights =  data3D[[All,3]];
+weights = weights/.{x_/;x<0.90 -> 1.0,x_/;x<1.0-> 0.0};
+(* set all intensities > 0.90 to zero weights *)
+fm = NonlinearModelFit[data3D,
+{
+background + (a*Exp[-((x-mx)^2/(2*sx^2)) - ((y-my)^2/(2*sy^2))]),
+{background>0,a >0 ,mx>0, my>0, sx>0, sy>0}
+},
+{{background,0.1},{a,intensityGuess},{mx,cent/2},{my,cent/2},{sx,cent/4},{sy,cent/4}},
+{x,y},Weights->weights
+];
+];
+bestfit = fm["BestFitParameters"];
+{background,a,mx,my,sx,sy} = {background,a,mx,my,sx,sy} /. fm["BestFitParameters"];
+{(Mean/@Transpose@box + (-{mx,my} +{dx,dy}/2.0)),background,a,mx,my,sx,sy}
 ];
 
 
 funcGenerator[OptionsPattern[SMTrack]]:= Switch[OptionValue@"subpixelLocalize", True,
 detectParticle[image_Image,LoGkernel_,thresh_]:= Block[{segImage, masks,boundingboxes,shapes},
 segImage = segmentImage[image,LoGkernel,thresh];
-{masks,shapes,boundingboxes} = Values@ComponentMeasurements[segImage,{"Mask","Shape","BoundingBox"}]\[Transpose];
+{masks, shapes, boundingboxes} = Values@ComponentMeasurements[segImage,{"Mask","Shape","BoundingBox"}]\[Transpose];
 MapThread[modelFit[image, ##]&,{masks,shapes,boundingboxes}]
 ], _ ,
 detectParticle[image_Image,LoGkernel_,thresh_]:= segmentImage[image,LoGkernel,thresh]
@@ -77,14 +148,16 @@ detectParticle[image_Image,LoGkernel_,thresh_]:= segmentImage[image,LoGkernel,th
 
 (* row wise minimums to determine which target cells are mapped from the source cells *)
 rowwiseMins[costMat_]:= With[{constInfArray = ConstantArray[\[Infinity],Last@Dimensions[costMat]]},
-Rule@@@SparseArray[Unitize@Map[If[Min[#] == \[Infinity], constInfArray, # - Min@#]&,costMat], Automatic, 1]["NonzeroPositions"]
+Rule@@@SparseArray[Unitize@Map[If[Min[#] == \[Infinity], constInfArray, # - Min@#]&,
+ costMat], Automatic, 1]["NonzeroPositions"]
 ];
 
 
 (* column wise minimums to determine cell mappings from current frame to the previous frame *)
 colwiseMins[costMat_,groupingmetric_:(Last->First)]:= With[{constInfArray = ConstantArray[\[Infinity],First@Dimensions[costMat]]},
 GroupBy[
-SparseArray[Unitize@Map[If[Min[#] == \[Infinity], constInfArray ,#-Min[#]]&, costMat\[Transpose]], Automatic, 1]["NonzeroPositions"],
+SparseArray[Unitize@Map[If[Min[#] == \[Infinity], constInfArray ,#-Min[#]]&,
+ costMat\[Transpose]], Automatic, 1]["NonzeroPositions"],
 groupingmetric, #]&
 ];
 
@@ -96,8 +169,9 @@ groupingmetric, #]&
 overlapMatrix[seg1_,seg2_]:= Block[{keys1,keys2,mask,map,rules1,rules2},
 keys1 = Keys@ComponentMeasurements[seg1, "Label"];
 keys2 = Keys@ComponentMeasurements[seg2, "Label"];
-mask= Unitize[seg1*seg2];
-map = Normal@Counts@Thread[{SparseArray[mask*seg1]["NonzeroValues"], SparseArray[mask*seg2]["NonzeroValues"]}];
+mask = Unitize[seg1*seg2];
+map = Normal@Counts@Thread[{SparseArray[mask*seg1]["NonzeroValues"],
+ SparseArray[mask*seg2]["NonzeroValues"]}];
 {rules1, rules2}= Dispatch@Thread[# -> Range@Length@#]&/@{keys1, keys2};
 map[[All,1,1]] = map[[All,1,1]]/.rules1;
 map[[All,1,2]] = map[[All,1,2]]/.rules2;
@@ -137,7 +211,6 @@ If[subpix,
 {centroidPrev,areaPrev}=Values@ComponentMeasurements[Prev,{"Centroid","Area"}]\[Transpose];
 {centroidCurr,areaCurr}=Values@ComponentMeasurements[Curr,{"Centroid","Area"}]\[Transpose];
 ];
-
 {nRow,nCol} = Length/@{centroidPrev,centroidCurr};
  maxCentDist = maxJumpDistance[#,centroidCurr,First@meanParticleDist[#]]&@centroidPrev;
 centroidDiffMat = DistanceMatrix[N@centroidPrev,N@centroidCurr];
@@ -174,11 +247,11 @@ artificialInds = rules/.Rule->List;
 previnds = Part[ truePrevKeys,artificialInds[[All,1]] ];
 realindices = Transpose[{previnds,Part[artificialInds,All,2]}];(*{true label prev, label current}*)
 (* create the graph with initialized weights for the assignment problem *)
-assignmentList= Block[{p,c,edges,edgeweights,graph,assignments},
-edges=Subscript[p,First@#]->Subscript[c,Last@#]&/@realindices;
+assignmentList = Block[{p,c,edges,edgeweights,graph,assignments},
+edges = Subscript[p,First@#]->Subscript[c,Last@#]&/@realindices;
 edgeweights = costMat[[Sequence@@#]]&/@artificialInds;
 graph = Graph[edges,EdgeWeight->edgeweights];
-assignments= FindIndependentEdgeSet@graph;
+assignments = FindIndependentEdgeSet@graph;
 Replace[assignments, HoldPattern[Subscript[p,x_]\[DirectedEdge] Subscript[c,y_]]:>{x,y},{1}]
 ];
 {artificialInds[[All,1]],assignmentList}
@@ -190,7 +263,7 @@ assignmentLabelMat[segCurr_,costMat_,truePrevKeys_]:= Module[{segmentCurr= segCu
  allAssignmentRules,assignmentsList,artificialInds},
 
 currframelabels = Keys@ComponentMeasurements[segCurr,"Label"];
-{artificialInds,assignmentsList} =assignmentHelper[costMat,truePrevKeys];
+{artificialInds,assignmentsList} = assignmentHelper[costMat,truePrevKeys];
 ruleAssigned = Reverse[Rule@@@assignmentsList,{2}];
 currentassigned = Part[assignmentsList, All, 2];
 currentunassigned = Complement[currframelabels,currentassigned]; (* new spots *)
@@ -202,36 +275,46 @@ Replace[segCurr,allAssignmentRules,{2}]
 ];
 
 
-caten[list1_,list2:{_?NumberQ,_?NumberQ}]:=Join[list1,{list2}];
-caten[list1_,list2:{{_,_}..}]:=list1~Join~list2;
+DownValues[caten]={
+HoldPattern[caten[{},{}]]:>{},
+HoldPattern[caten[list1:{{__?NumberQ},__},list2:{{__?NumberQ},__}]]:>Join[{list1},{list2}],
+HoldPattern[caten[list1_,list2:{{__?NumberQ},__}]]:>Join[list1,{list2}],
+HoldPattern[caten[list1:{{__?NumberQ},__},list2_]]:>Join[{list1},list2],
+HoldPattern[caten[list1:{{{__?NumberQ},__}..},list2_]]:>Join[list1,list2],
+HoldPattern[caten[list1_,list2:{{{__?NumberQ},__}..}]]:>Join[list1,list2]
+};
 
 
-(* make currentKeyVector and seeds global *)
-assignmentSubPixel[centroidsCurr_,costMat_]:= Module[{newlabels,assignmentsList,currentassigned,
-currentunassigned,maxlabelprev,rules, dim = Dimensions@costMat,parent,artificialInds},
+assignmentSubPixel[Curr_,costMat_]:= Module[{ newlabels,assignmentsList,currentassigned,currentunassigned,
+maxlabelprev,rules, dim = Dimensions@costMat,parent,artificialInds},
 
 (* add tracked label points to seeds *)
 {artificialInds,assignmentsList} = assignmentHelper[costMat,currentKeyVector];
-assignmentsList = SortBy[assignmentsList, First];
-{parent,currentassigned}={#[[All,1]], #[[All,2]]}&[assignmentsList];
+assignmentsList = SortBy[assignmentsList,First];
+{parent,currentassigned } = {#[[All,1]],#[[All,2]]}&[assignmentsList];
 
- MapThread[(seeds[#1]=Join[seeds[#1],{#2}])&,
-{parent,centroidsCurr[[currentassigned]]}];
+ MapThread[(seeds[#1] = Join[seeds[#1],{#2}])&,{parent,Part[Curr,currentassigned]}];
 
 (* new spots added to seeds and currentKeyVector *)
-currentunassigned = Complement[Range[Last@dim],currentassigned];
+currentunassigned = Complement[Range[Last@dim],currentassigned]; 
 maxlabelprev = Max@currentKeyVector;
-newlabels = Range[maxlabelprev+1,maxlabelprev+Length@currentunassigned];
+newlabels = Range[maxlabelprev + 1, maxlabelprev + Length@currentunassigned];
 
-AssociateTo[seeds,
-MapAt[List, Thread[newlabels->Part[centroidsCurr,currentunassigned]],{All,2}]
+If[newlabels != {}, 
+ AssociateTo[seeds,
+  MapAt[List, 
+   Thread[newlabels -> Part[Curr,currentunassigned]],{All,2}]
+]
 ];
 
 (* remove untracked parents from currentKeyVector *)
 currentKeyVector = DeleteCases[currentKeyVector,Alternatives@@(currentKeyVector~Complement~parent)];
-currentKeyVector= Join[currentKeyVector,newlabels];
-(* tracked and then new *)
-centroidsCurr[[currentassigned]]~caten~centroidsCurr[[currentunassigned]]
+currentKeyVector = Join[currentKeyVector,newlabels];
+
+If[currentassigned != {},
+(Curr[[currentassigned]]~caten~Curr[[currentunassigned]]),
+Curr[[currentunassigned]]
+ ]
 ];
 
 
@@ -241,23 +324,23 @@ centroidsCurr[[currentassigned]]~caten~centroidsCurr[[currentunassigned]]
 
 (* prev and curr are labeled matrices *)
 stackCorrespondence[prev_, curr_, False, opt: OptionsPattern[SMTrack]]:= Module[{costmat, currentMat,truelabels},
-costmat =costMatrix[prev,curr,opt];
+costmat = costMatrix[prev,curr,opt];
 truelabels = Keys@ComponentMeasurements[prev,"Label"];
 assignmentLabelMat[curr,costmat,truelabels]
 ];
 
 
-(* prev and curr are centroids *)
-stackCorrespondence[prev_, curr_, True, opt: OptionsPattern[SMTrack]]:= Module[{costmat},
-costmat =costMatrix[prev,curr,opt];
+(* prev and curr are props obtained from subpixelLocalization *)
+stackCorrespondence[prev_, curr_, True,opt:OptionsPattern[SMTrack]]:= Module[{costmat},
+costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
 assignmentSubPixel[curr,costmat]
-];
+]; 
 
 
 (* Main Function *)
 SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["segmented"], input,
 subpixloc = OptionValue@"subpixelLocalize", imports= Import@filename, logKernel = OptionValue@"LoGkernel",
-thresh = OptionValue@"morphBinarizeThreshold"},
+thresh = OptionValue@"threshold"},
 
 funcGenerator["subpixelLocalize" -> subpixloc];
 
