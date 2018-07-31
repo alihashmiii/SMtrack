@@ -11,8 +11,13 @@
 BeginPackage["SMTrack`"];
 
 
+<<<<<<< HEAD
 Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "overlapW" -> 0,
  "subpixelLocalize" -> False, "LoGkernel" -> 2, "threshold" -> 2.51};
+=======
+Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "overlapW" -> 0, "subpixelLocalize" -> False,
+ "LoGkernel" -> 2, "morphBinarizeThreshold" -> 0.66};
+>>>>>>> 04189ad825cb69f2c8b31470ad932ce7b73ffe21
 
 
 SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the
@@ -212,7 +217,7 @@ If[subpix,
 {centroidCurr,areaCurr}=Values@ComponentMeasurements[Curr,{"Centroid","Area"}]\[Transpose];
 ];
 {nRow,nCol} = Length/@{centroidPrev,centroidCurr};
- maxCentDist = maxJumpDistance[#,centroidCurr,First@meanParticleDist[#]]&@centroidPrev;
+maxCentDist = maxJumpDistance[#,centroidCurr,First@meanParticleDist[#]]&@centroidPrev;
 centroidDiffMat = DistanceMatrix[N@centroidPrev,N@centroidCurr];
 centroidTerm = centCompiled[centroidDiffMat,maxCentDist];
 spArraycentDiff = SparseArray[UnitStep[maxCentDist - centroidDiffMat], Automatic, 0];
@@ -296,6 +301,7 @@ assignmentsList = SortBy[assignmentsList,First];
  MapThread[(seeds[#1] = Join[seeds[#1],{#2}])&,{parent,Part[Curr,currentassigned]}];
 
 (* new spots added to seeds and currentKeyVector *)
+<<<<<<< HEAD
 currentunassigned = Complement[Range[Last@dim],currentassigned];
 maxlabelprev = Max@currentKeyVector;
 newlabels = Range[maxlabelprev + 1, maxlabelprev + Length@currentunassigned];
@@ -305,15 +311,33 @@ If[newlabels != {},
   MapAt[List,
    Thread[newlabels -> Part[Curr,currentunassigned]],{All,2}]
 ]
+=======
+ currentunassigned = Complement[Range[Last@dim],currentassigned];
+ maxlabelprev = Max@currentKeyVector;
+ newlabels = Range[maxlabelprev+1,maxlabelprev+Length@currentunassigned];
+
+If[newlabels != {},
+ AssociateTo[seeds, 
+  MapAt[List,Thread[newlabels->Part[centroidsCurr,currentunassigned]],{All,2}]
+ ]
+>>>>>>> 04189ad825cb69f2c8b31470ad932ce7b73ffe21
 ];
 
 (* remove untracked parents from currentKeyVector *)
 currentKeyVector = DeleteCases[currentKeyVector,Alternatives@@(currentKeyVector~Complement~parent)];
+<<<<<<< HEAD
 currentKeyVector = Join[currentKeyVector,newlabels];
 
 If[currentassigned != {},
 (Curr[[currentassigned]]~caten~Curr[[currentunassigned]]),
 Curr[[currentunassigned]]
+=======
+currentKeyVector= Join[currentKeyVector,newlabels];
+
+If[currentassigned != {}, 
+ (centroidsCurr[[currentassigned]]~caten~centroidsCurr[[currentunassigned]]),
+ centroidsCurr[[currentunassigned]]
+>>>>>>> 04189ad825cb69f2c8b31470ad932ce7b73ffe21
  ]
 ];
 
