@@ -103,10 +103,8 @@ modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,a,b,w
  (* if any param is less than 0 then we run a constrained fit *)
  If[Length[Position[bestfit[[All,2]],x_/;x<0]]>0,
   fm = NonlinearModelFit[data3D,
- {
- background + (a * Exp[-((x-mx)^2/(2*sx^2)) - ((y-my)^2/(2*sy^2))]),
- {background>0,a >0, mx >0, my > 0, sx >0, sy >0}
- },
+ {background + (a * Exp[-((x-mx)^2/(2*sx^2)) - ((y-my)^2/(2*sy^2))]),
+ {background>0,a >0, mx >0, my > 0, sx >0, sy >0}},
  {{background,0.1},{a,intensityGuess},{mx,cent/2},{my,cent/2},{sx,cent/4},{sy,cent/4}},
  {x,y}
  ];
@@ -117,10 +115,8 @@ modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,a,b,w
  weights = weights/.{x_/;x<0.90 -> 1.0,x_/;x<1.0-> 0.0};
  (* set all intensities > 0.90 to zero weights *)
  fm = NonlinearModelFit[data3D,
- {
- background + (a*Exp[-((x-mx)^2/(2*sx^2)) - ((y-my)^2/(2*sy^2))]),
- {background>0,a >0 ,mx>0, my>0, sx>0, sy>0}
- },
+ {background + (a*Exp[-((x-mx)^2/(2*sx^2)) - ((y-my)^2/(2*sy^2))]),
+ {background>0,a >0 ,mx>0, my>0, sx>0, sy>0}},
  {{background,0.1},{a,intensityGuess},{mx,cent/2},{my,cent/2},{sx,cent/4},{sy,cent/4}},
  {x,y}, Weights->weights
  ];
