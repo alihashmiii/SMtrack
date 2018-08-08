@@ -10,7 +10,7 @@ Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) Filter
 
 `Possible improvements (Near Future):`
 
-###### 1. Add a different detection scheme (example, FogBank by NIST) ... can perhaps improve results 
+###### 1. Add a different detection scheme (example, FogBank by NIST)
 
 ###### 2. Not necessary but perhaps important for low density cases: Kalman predictor to handle occlusions when a particle motion-model exists (e.g. constant velocity etc ..) 
 
