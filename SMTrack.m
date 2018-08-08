@@ -40,14 +40,17 @@ maxJumpDistance[centPrev_,centNew_,distDelaunay_]:= Module[{nearestFunc,rec,pts,
 ];
 
 
-(* segmentImage[image_Image,LoGKernelsize_,threshold_]:=MorphologicalComponents[
+(* 
+segmentImage[image_Image,LoGKernelsize_,threshold_]:=MorphologicalComponents[
 FillingTransform@MorphologicalBinarize[
 ColorNegate@*ImageAdjust@LaplacianGaussianFilter[image,LoGKernelsize],
 threshold]
-]; *)
+];
+*)
 
 
-(* segmentImage[image_Image,LoGKernelsize_]:=Module[{seg,seeds,bglabel},
+(*
+segmentImage[image_Image,LoGKernelsize_]:=Module[{seg,seeds,bglabel},
 seg =MorphologicalBinarize[
 DeleteSmallComponents@Threshold[ColorNegate@LaplacianGaussianFilter[Blur[image],LoGKernelsize],
 {"Hard","Cluster"}]
@@ -56,7 +59,8 @@ seeds=MaxDetect[DistanceTransform@seg];
 seg=WatershedComponents[image,seeds,Method\[Rule]"Rainfall"];
 bglabel=First@@MaximalBy[ComponentMeasurements[seg,"Area"],Values];
 ArrayComponents[seg,2,bglabel\[Rule] 0]
-]; *)
+];
+*)
 
 
 segmentImage[image_Image,LoGKernelsize_,threshold_]:=Module[{seg,seeds,bglabel},
@@ -71,7 +75,8 @@ segmentImage[image_Image,LoGKernelsize_,threshold_]:=Module[{seg,seeds,bglabel},
 ];
 
 
-(* modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,data3D,a,b,mx,my,sx,sy,x,y,fm},
+(*
+modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,data3D,a,b,mx,my,sx,sy,x,y,fm},
 pixelpos = mask["NonzeroPositions"];
 pixelval = PixelValue[image, pixelpos];
 img = ReplacePixelValue[shape, Thread[PixelValuePositions[shape, 1] -> pixelval]];
@@ -81,8 +86,8 @@ fm = NonlinearModelFit[data3D, a E^(-(((-my + y) Cos[b] - (-mx + x) Sin[b])^2/(2
  (-my + y) Sin[b])^2/(2 sx^2)), {a,b,mx,my,sx,sy},{x, y}];
 {a,b,mx,my,sx,sy} = {a,b,mx,my,sx,sy} /. fm["BestFitParameters"];
 Mean/@Transpose@box + {mx,my} - (Dimensions@data)/2.0
-]; *)
-
+];
+*)
 
 modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,a,b,weights,data3D,
  mx,my,sx,sy,x,y,fm,dx,dy,cent,background,bestfit,intensityGuess,brightest},
