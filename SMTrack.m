@@ -35,7 +35,8 @@ maxJumpDistance[centPrev_,centNew_,distDelaunay_]:= Module[{nearestFunc,rec,pts,
  nearestFunc = Nearest@centPrev;
  rec = Flatten[Table[{i, Length@nearestFunc[#,{All, i}]},{i, 0, distDelaunay, 1}]&/@centNew, 1];
  pts = Cases[rec, {_,_?(# <= 1 &)}];
- \[ScriptCapitalA] = WeightedData[Keys@#,Exp[Values@#]]&@Counts[Part[pts,All,1]];
+ \[ScriptCapitalA] = WeightedData[Keys@#,Exp[Values[#]/Total[Values@#]]]&@Counts[Part[pts,All,1]];
+ (*\[ScriptCapitalA] = WeightedData[Part[pts,All,1]]*)
  N@*Mean@\[ScriptCapitalA]
 ];
 
