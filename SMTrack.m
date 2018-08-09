@@ -11,7 +11,7 @@
 BeginPackage["SMTrack`"];
 
 Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "overlapW" -> 0, "subpixelLocalize" -> False,
-"LoGkernel" -> 2, "threshold" -> 2.51, "constrainedSearch" -> True, "Dist" -> 15.0};
+"LoGkernel" -> 2, "threshold" -> 2.51, "constrainedSearch" -> False, "Dist" -> 15.0};
 
 
 SMTrack::usage = "The package implements a robust single molecule tracking scheme. The procedure is somewhat similar to the
