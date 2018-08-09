@@ -30,7 +30,7 @@ Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) filter
 
 ##### superposition of all particle trajectories for the above movie `subpixel localization = False`:
 
-![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/segoutput.png)
+![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/segmented_output.png)
 
 
 ##### a Gaussian (rainbow) is fit to the data (yellow) for achieving subpixel localization:
