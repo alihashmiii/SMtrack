@@ -132,8 +132,8 @@ modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,a,b,w
  {background,a,mx,my,sx,sy} = {background,a,mx,my,sx,sy} /. fm["BestFitParameters"];
  (* {(Mean/@Transpose@box + ({mx,my} -{dx,dy}/2.0)),background,a,mx,my,sx,sy} *)
  If[AnyTrue[#,(#<0||#>First@dimMask||#>Last@dimMask)&],
-{Values@ComponentMeasurements[mask,"Centroid"],0,0,0,0,0,0}~FlattenAt~1,
-{#,background,a,mx,my,sx,sy}]&[(Mean/@Transpose@box+({mx,my}-{dx,dy}/2.0))]
+  {Values@ComponentMeasurements[mask,"Centroid"],0,0,0,0,0,0}~FlattenAt~1,
+  {#,background,a,mx,my,sx,sy}]&[(Mean/@Transpose@box+({mx,my}-{dx,dy}/2.0))]
 ];
 
 
