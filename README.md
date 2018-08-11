@@ -1,7 +1,7 @@
 Single Particle Tracking
 =======
 
-`Currently Active`
+![alt-text](https://camo.githubusercontent.com/184953fa43fce5380f0872d9cbc669c39cb0f82e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f7374617475732d7061737365642d626c75652e737667)
 
 SMTrack package implements a robust single molecule tracking scheme based upon a modified version of Lineage Mapper (Chalfoun et al, Scientific Reports 2016). A novel implementation of a per-frame particle jump-distance has been incorporated, which relies on a mean distance (computed via a Delaunay Mesh) and its minimization such that a maximum of 0 or 1 particle association is obtained between consecutive frames. There is also the option to specify a custom search distance.
 
