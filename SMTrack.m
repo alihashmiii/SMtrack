@@ -324,7 +324,7 @@ stackCorrespondence[prev_, curr_, False, opt: OptionsPattern[SMTrack]]:= Module[
 
 
 (* prev and curr are props obtained from subpixelLocalization *)
-stackCorrespondence[prev_, curr_, True,opt:OptionsPattern[SMTrack]]:= Module[{costmat},
+stackCorrespondence[prev_, curr_, True, opt:OptionsPattern[SMTrack]]:= Module[{costmat},
  costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
  assignmentSubPixel[curr,costmat]
 ];
