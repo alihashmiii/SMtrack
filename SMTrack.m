@@ -138,12 +138,23 @@ modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,a,b,w
 
 
 funcGenerator[OptionsPattern[SMTrack]]:= Switch[OptionValue@"subpixelLocalize", True,
- detectParticle[image_Image,LoGkernel_,thresh_]:= Block[{segImage, masks,boundingboxes,shapes},
+ (detectParticle[image_Image,LoGkernel_,thresh_]:= Block[{segImage, masks,boundingboxes,shapes},
  segImage = segmentImage[image,LoGkernel,thresh];
  {masks, shapes, boundingboxes} = Values@ComponentMeasurements[segImage,{"Mask","Shape","BoundingBox"}]\[Transpose];
  MapThread[modelFit[image, ##]&,{masks,shapes,boundingboxes}]
- ], _ ,
- detectParticle[image_Image,LoGkernel_,thresh_]:= segmentImage[image,LoGkernel,thresh]
+ ];
+ (* prev and curr are props obtained from subpixelLocalization *)
+ stackCorrespondence[prev_, curr_, opt:OptionsPattern[SMTrack]]:= Module[{costmat},
+ costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
+ assignmentSubPixel[curr,costmat]
+]), _ ,
+ (detectParticle[image_Image,LoGkernel_,thresh_]:= segmentImage[image,LoGkernel,thresh];
+ (* prev and curr are labeled matrices *)
+ stackCorrespondence[prev_, curr_, opt: OptionsPattern[SMTrack]]:= Module[{costmat, currentMat,truelabels},
+ costmat = costMatrix[prev,curr,opt];
+ truelabels = Keys@ComponentMeasurements[prev,"Label"];
+ assignmentLabelMat[curr,costmat,truelabels]
+])
 ];
 
 
@@ -329,21 +340,6 @@ assignmentSubPixel[Curr_,costMat_]:= Module[{ newlabels,assignmentsList,currenta
 (*helperFunc( ) and main( )*)
 
 
-(* prev and curr are labeled matrices *)
-stackCorrespondence[prev_, curr_, False, opt: OptionsPattern[SMTrack]]:= Module[{costmat, currentMat,truelabels},
- costmat = costMatrix[prev,curr,opt];
- truelabels = Keys@ComponentMeasurements[prev,"Label"];
- assignmentLabelMat[curr,costmat,truelabels]
-];
-
-
-(* prev and curr are props obtained from subpixelLocalization *)
-stackCorrespondence[prev_, curr_, True,opt:OptionsPattern[SMTrack]]:= Module[{costmat},
- costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
- assignmentSubPixel[curr,costmat]
-];
-
-
 (* Main Function *)
 SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["segmented"], input,
  subpixloc = OptionValue@"subpixelLocalize", imports= Import@filename, logKernel = OptionValue@"LoGkernel",
@@ -362,7 +358,7 @@ If[subpixloc,
  seeds = <|Thread[currentKeyVector -> Partition[First@input,1]]|>
  ];
 
- FoldList[stackCorrespondence[##,subpixloc,opt]&,First@input,Rest@input]
+ FoldList[stackCorrespondence[##,opt]&,First@input,Rest@input]
 ];
 
 
