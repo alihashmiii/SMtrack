@@ -133,14 +133,14 @@ funcGenerator[OptionsPattern[SMTrack]]:= Switch[OptionValue@"subpixelLocalize", 
  stackCorrespondence[prev_, curr_, opt:OptionsPattern[SMTrack]]:= Module[{costmat},
  costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
  assignmentSubPixel[curr,costmat]
-]), _ ,
+ ]), _ ,
  (detectParticle[image_Image,LoGkernel_,thresh_]:= segmentImage[image,LoGkernel,thresh];
  (* prev and curr are labeled matrices *)
  stackCorrespondence[prev_, curr_, opt: OptionsPattern[SMTrack]]:= Module[{costmat, currentMat,truelabels},
  costmat = costMatrix[prev,curr,opt];
  truelabels = Keys@ComponentMeasurements[prev,"Label"];
  assignmentLabelMat[curr,costmat,truelabels]
-])
+ ])
 ];
 
 
@@ -323,27 +323,9 @@ assignmentSubPixel[Curr_,costMat_]:= Module[{ newlabels,assignmentsList,currenta
 
 
 (* ::Subsection:: *)
-(*helperFunc( ) and main( )*)
+(*main( )*)
 
 
-<<<<<<< HEAD
-=======
-(* prev and curr are labeled matrices *)
-stackCorrespondence[prev_, curr_, False, opt: OptionsPattern[SMTrack]]:= Module[{costmat, currentMat,truelabels},
- costmat = costMatrix[prev,curr,opt];
- truelabels = Keys@ComponentMeasurements[prev,"Label"];
- assignmentLabelMat[curr,costmat,truelabels]
-];
-
-
-(* prev and curr are props obtained from subpixelLocalization *)
-stackCorrespondence[prev_, curr_, True, opt:OptionsPattern[SMTrack]]:= Module[{costmat},
- costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
- assignmentSubPixel[curr,costmat]
-];
-
-
->>>>>>> bcfe21fb63b7b612331c7119ab72f80c4314cb2f
 (* Main Function *)
 SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["segmented"], input,
  subpixloc = OptionValue@"subpixelLocalize", imports= Import@filename, logKernel = OptionValue@"LoGkernel",
