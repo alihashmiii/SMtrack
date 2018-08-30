@@ -76,20 +76,6 @@ segmentImage[image_Image,LoGKernelsize_,threshold_]:=Module[{seg,seeds,bglabel},
 ];
 
 
-(*
-modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,data3D,a,b,mx,my,sx,sy,x,y,fm},
-pixelpos = mask["NonzeroPositions"];
-pixelval = PixelValue[image, pixelpos];
-img = ReplacePixelValue[shape, Thread[PixelValuePositions[shape, 1] -> pixelval]];
-data = ImageData@ImagePad[img, 2];
-data3D = Flatten[MapIndexed[{#2[[1]], #2[[2]], #1} &, data, {2}], 1];
-fm = NonlinearModelFit[data3D, a E^(-(((-my + y) Cos[b] - (-mx + x) Sin[b])^2/(2 sy^2)) - ((-mx + x) Cos[b] +
- (-my + y) Sin[b])^2/(2 sx^2)), {a,b,mx,my,sx,sy},{x, y}];
-{a,b,mx,my,sx,sy} = {a,b,mx,my,sx,sy} /. fm["BestFitParameters"];
-Mean/@Transpose@box + {mx,my} - (Dimensions@data)/2.0
-];
-*)
-
 modelFit[image_, mask_, shape_, box_] := Block[{pixelpos,pixelval,img,data,a,b,weights,data3D,
  mx,my,sx,sy,x,y,fm,dx,dy,cent,background,bestfit,intensityGuess,brightest,
  dimMask = Dimensions@mask},
@@ -340,6 +326,24 @@ assignmentSubPixel[Curr_,costMat_]:= Module[{ newlabels,assignmentsList,currenta
 (*helperFunc( ) and main( )*)
 
 
+<<<<<<< HEAD
+=======
+(* prev and curr are labeled matrices *)
+stackCorrespondence[prev_, curr_, False, opt: OptionsPattern[SMTrack]]:= Module[{costmat, currentMat,truelabels},
+ costmat = costMatrix[prev,curr,opt];
+ truelabels = Keys@ComponentMeasurements[prev,"Label"];
+ assignmentLabelMat[curr,costmat,truelabels]
+];
+
+
+(* prev and curr are props obtained from subpixelLocalization *)
+stackCorrespondence[prev_, curr_, True, opt:OptionsPattern[SMTrack]]:= Module[{costmat},
+ costmat = costMatrix[prev[[All,1]],curr[[All,1]],opt];
+ assignmentSubPixel[curr,costmat]
+];
+
+
+>>>>>>> bcfe21fb63b7b612331c7119ab72f80c4314cb2f
 (* Main Function *)
 SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["segmented"], input,
  subpixloc = OptionValue@"subpixelLocalize", imports= Import@filename, logKernel = OptionValue@"LoGkernel",
