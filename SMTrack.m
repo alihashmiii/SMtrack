@@ -41,7 +41,7 @@ maxJumpDistance[centPrev_,centNew_,distDelaunay_]:= Module[{nearestFunc,rec,pts,
 ];
 
 
-(* 
+(*
 segmentImage[image_Image,LoGKernelsize_,threshold_]:=MorphologicalComponents[
 FillingTransform@MorphologicalBinarize[
 ColorNegate@*ImageAdjust@LaplacianGaussianFilter[image,LoGKernelsize],
@@ -214,8 +214,8 @@ spArrayOverlap,sizeW=OptionValue@"sizeW",overlapW=OptionValue@"overlapW",subpix=
   {centroidCurr,areaCurr}=Values@ComponentMeasurements[Curr,{"Centroid","Area"}]\[Transpose];
   ];
   {nRow,nCol} = Length/@{centroidPrev,centroidCurr};
-  maxCentDist = If[OptionValue["constrainedSearch"], OptionValue["Dist"], 
-    maxJumpDistance[#,centroidCurr,First@meanParticleDist[#]]&@centroidPrev  
+  maxCentDist = If[OptionValue["constrainedSearch"], OptionValue["Dist"],
+    maxJumpDistance[#,centroidCurr,First@meanParticleDist[#]]&@centroidPrev
    ];
   centroidDiffMat = DistanceMatrix[N@centroidPrev,N@centroidCurr];
   centroidTerm = centCompiled[centroidDiffMat,maxCentDist];
@@ -323,10 +323,7 @@ assignmentSubPixel[Curr_,costMat_]:= Module[{ newlabels,assignmentsList,currenta
 
 
 (* ::Subsection:: *)
-(*main( )*)
-
-
-(* Main Function *)
+(*Main Function*)
 SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["segmented"], input,
  subpixloc = OptionValue@"subpixelLocalize", imports= Import@filename, logKernel = OptionValue@"LoGkernel",
  thresh = OptionValue@"threshold"},
