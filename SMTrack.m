@@ -332,7 +332,6 @@ SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["seg
 
  input = Switch[segmented, False,
  If[subpixloc == False,
-   ParallelTable[detectParticle[i,logKernel,thresh],{i,imports}],
    ParallelTable[Quiet@detectParticle[i,logKernel,thresh],{i,imports}]
   ], _ ,imports];
 
