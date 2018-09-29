@@ -331,9 +331,8 @@ SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["seg
  funcGenerator["subpixelLocalize" -> subpixloc];
 
  input = Switch[segmented, False,
- If[subpixloc == False,
    ParallelTable[Quiet@detectParticle[i,logKernel,thresh],{i,imports}]
-  ], _ ,imports];
+   , _ ,imports];
 
 If[subpixloc,
  currentKeyVector = Range[Length@*First@input];
