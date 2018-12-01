@@ -10,6 +10,7 @@
 
 BeginPackage["SMTrack`"];
 
+
 Options[SMTrack] = {"segmented" -> False, "centroidW" -> 1.0, "sizeW" -> 0, "overlapW" -> 0, "subpixelLocalize" -> False,
 "LoGkernel" -> 2, "threshold" -> 2.51, "constrainedSearch" -> False, "Dist" -> 15.0};
 
@@ -324,11 +325,14 @@ assignmentSubPixel[Curr_,costMat_]:= Module[{ newlabels,assignmentsList,currenta
 
 (* ::Subsection:: *)
 (*Main Function*)
+
+
 SMTrack[filename_, opt: OptionsPattern[]]:= Module[{segmented = OptionValue["segmented"], input,
  subpixloc = OptionValue@"subpixelLocalize", imports= Import@filename, logKernel = OptionValue@"LoGkernel",
  thresh = OptionValue@"threshold"},
 
  funcGenerator["subpixelLocalize" -> subpixloc];
+ LaunchKernels[];
 
  input = Switch[segmented, False,
    ParallelTable[Quiet@detectParticle[i,logKernel,thresh],{i,imports}]
