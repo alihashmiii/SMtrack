@@ -24,6 +24,7 @@ Note: the current detection scheme utilizes a Laplacian of Gaussian (LoG) filter
 
 
 ##### for computing per-frame jump distance:
+Note: I have not updated the image below but the improved detection scheme in the code captures almost all visible particles 
 
 ![alt-text](https://github.com/alihashmiii/SMtrack/blob/master/for%20readme/overlayed%20jump%20distance.png)
 
